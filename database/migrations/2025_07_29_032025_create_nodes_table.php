@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\Node;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -13,6 +14,8 @@ return new class extends Migration
     {
         Schema::create('nodes', function (Blueprint $table) {
             $table->id();
+            $table->foreignIdFor(Node::class, 'parent_id')->nullable()->constrained();
+            $table->string('path')->nullable()->index();
             $table->timestamps();
         });
     }
