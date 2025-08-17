@@ -66,5 +66,8 @@ class Nodes extends Component
                 }
             }
         }
+        if (! $this->pages) {
+            $this->pages[] = NodesPageData::fromNodes(collect([$node]));
+        }
     }
 }
