@@ -54,6 +54,8 @@ class Nodes extends Component
                     && $node->path <= $page->end_cursor
             ) {
                 $this->dispatch(NodesPage::REFRESH_EVENT.$index);
+
+                return;
             } elseif ($node->path > $page->end_cursor) {
                 $nextPageLoaded = array_key_exists($index + 1, $this->pages);
                 if ($nextPageLoaded
@@ -63,6 +65,8 @@ class Nodes extends Component
                     array_splice($this->pages, $index + 1, 0, [
                         NodesPageData::fromNodes(collect([$node])),
                     ]);
+
+                    return;
                 }
             }
         }
