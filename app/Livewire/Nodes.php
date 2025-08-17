@@ -62,9 +62,7 @@ class Nodes extends Component
                     && $node->path < $this->pages[$index + 1]->start_cursor
                     || (! $nextPageLoaded && ! $this->morePages)
                 ) {
-                    array_splice($this->pages, $index + 1, 0, [
-                        NodesPageData::fromNodes(collect([$node])),
-                    ]);
+                    $this->pages[$index]->end_cursor = $node->path;
 
                     return;
                 }
