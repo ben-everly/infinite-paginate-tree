@@ -5,12 +5,15 @@ namespace App\Livewire;
 use App\Models\Node;
 use Illuminate\Pagination\Cursor;
 use Illuminate\Support\Collection;
+use Livewire\Attributes\On;
 use Livewire\Component;
 
 class Nodes extends Component
 {
-    /** @var Collection<int, NodesPageData> */
-    public Collection $pages;
+    public const CREATE_NODE_EVENT = 'node.create';
+
+    /** @var array<int, NodesPageData> */
+    public array $pages = [];
 
     public string $nextCursor = '';
 
@@ -18,7 +21,6 @@ class Nodes extends Component
 
     public function mount()
     {
-        $this->pages = collect();
         $this->addPage();
     }
 
@@ -35,17 +37,34 @@ class Nodes extends Component
             $this->nextCursor = $nodes->nextCursor()->encode();
         }
 
-        $items = collect($nodes->items());
-        if ($items->isNotEmpty()) {
-            $this->pages->push(NodesPageData::fromNodes($items));
-        }
+        collect($nodes->items())
+            ->whenNotEmpty(fn (Collection $items) => (
+                $this->pages[] = NodesPageData::fromNodes($items)
+            ));
     }
 
+    #[On(self::CREATE_NODE_EVENT)]
     public function createNode(?int $parentId = null)
     {
         $node = Node::create(['parent_id' => $parentId]);
-        if (! $this->morePages) {
-            $this->pages->push(NodesPageData::fromNodes(collect([$node])));
+
+        foreach ($this->pages as $index => $page) {
+            if (
+                $node->path >= $page->start_cursor
+                    && $node->path <= $page->end_cursor
+            ) {
+                $this->dispatch(NodesPage::REFRESH_EVENT.$index);
+            } elseif ($node->path > $page->end_cursor) {
+                $nextPageLoaded = array_key_exists($index + 1, $this->pages);
+                if ($nextPageLoaded
+                    && $node->path < $this->pages[$index + 1]->start_cursor
+                    || (! $nextPageLoaded && ! $this->morePages)
+                ) {
+                    array_splice($this->pages, $index + 1, 0, [
+                        NodesPageData::fromNodes(collect([$node])),
+                    ]);
+                }
+            }
         }
     }
 }

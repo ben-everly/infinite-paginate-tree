@@ -1,10 +1,16 @@
 @php
     use App\Livewire\Nodes;
 @endphp
-<div>
+<div class="border">
     @foreach ($this->nodes as $node)
-        <div class="border p-2 my-2 flex gap-2">
+        @php
+            $depth = substr_count($node->path, '/') - 2;
+        @endphp
+        <div class="p-2 my-2 flex gap-2" style="margin-left: {{ $depth * 20 }}px;">
             <h3>Node {{ $node->id }}</h3>
+            <button class="border" wire:click="createChild({{ $node->id }})">
+                Create Child
+            </button>
         </div>
     @endforeach
 </div>
