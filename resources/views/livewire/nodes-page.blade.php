@@ -1,7 +1,7 @@
 @php
     use App\Livewire\Nodes;
 @endphp
-<div class="border">
+<div>
     @foreach ($this->nodes as $node)
         @php
             $depth = substr_count($node->path, '/') - 2;
