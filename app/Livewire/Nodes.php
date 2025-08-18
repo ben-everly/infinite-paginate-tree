@@ -30,7 +30,7 @@ class Nodes extends Component
             return;
         }
         $nodes = Node::orderBy('path')->cursorPaginate(
-            10, ['*'], 'path',
+            20, ['*'], 'path',
             Cursor::fromEncoded($this->nextCursor)
         );
         if ($this->morePages = $nodes->hasMorePages()) {
