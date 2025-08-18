@@ -54,14 +54,17 @@ class Nodes extends Component
                 $node->path >= $page->start_cursor
                     && $node->path <= $page->end_cursor
             ) {
-                $this->dispatch(NodesPage::REFRESH_EVENT.$index);
+                $this->dispatch(NodesPage::REFRESH_EVENT.$page->key);
 
                 return;
             } elseif (
                 $node->path < $nextPage?->start_cursor
                     || (! $nextPage && ! $this->morePages)
             ) {
-                $this->pages[$index]->end_cursor = $node->path;
+                $this->pages[$index] = new NodesPageData(
+                    $this->pages[$index]->start_cursor,
+                    $node->path
+                );
 
                 return;
             }

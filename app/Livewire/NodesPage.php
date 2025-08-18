@@ -8,14 +8,12 @@ use Livewire\Attributes\Computed;
 use Livewire\Attributes\On;
 use Livewire\Component;
 
-#[On(NodesPage::REFRESH_EVENT.'{pageIndex}')]
+#[On(NodesPage::REFRESH_EVENT.'{pageData.key}')]
 class NodesPage extends Component
 {
     public const REFRESH_EVENT = 'nodes_page.refresh.';
 
     public NodesPageData $pageData;
-
-    public int $pageIndex;
 
     #[Computed]
     public function nodes(): Collection

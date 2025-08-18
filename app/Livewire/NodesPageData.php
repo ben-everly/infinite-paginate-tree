@@ -7,15 +7,14 @@ use Livewire\Wireable;
 
 class NodesPageData implements Wireable
 {
+    public string $key;
+
     public function __construct(
         public string $start_cursor,
         public string $end_cursor,
         public ?Collection $nodes = null
-    ) {}
-
-    public function key(): string
-    {
-        return $this->start_cursor.'-'.$this->end_cursor;
+    ) {
+        $this->key = $this->start_cursor.'-'.$this->end_cursor;
     }
 
     public function toLivewire(): array
