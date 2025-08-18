@@ -49,6 +49,7 @@ class Nodes extends Component
         $node = Node::create(['parent_id' => $parentId]);
 
         foreach ($this->pages as $index => $page) {
+            $nextPage = $this->pages[$index + 1] ?? null;
             if (
                 $node->path >= $page->start_cursor
                     && $node->path <= $page->end_cursor
@@ -56,16 +57,13 @@ class Nodes extends Component
                 $this->dispatch(NodesPage::REFRESH_EVENT.$index);
 
                 return;
-            } elseif ($node->path > $page->end_cursor) {
-                $nextPageLoaded = array_key_exists($index + 1, $this->pages);
-                if ($nextPageLoaded
-                    && $node->path < $this->pages[$index + 1]->start_cursor
-                    || (! $nextPageLoaded && ! $this->morePages)
-                ) {
-                    $this->pages[$index]->end_cursor = $node->path;
+            } elseif (
+                $node->path < $nextPage?->start_cursor
+                    || (! $nextPage && ! $this->morePages)
+            ) {
+                $this->pages[$index]->end_cursor = $node->path;
 
-                    return;
-                }
+                return;
             }
         }
         if (! $this->pages) {
