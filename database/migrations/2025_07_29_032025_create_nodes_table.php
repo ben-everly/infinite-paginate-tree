@@ -15,7 +15,7 @@ return new class extends Migration
         Schema::create('nodes', function (Blueprint $table) {
             $table->id();
             $table->foreignIdFor(Node::class, 'parent_id')->nullable()->constrained();
-            $table->string('path')->nullable()->index();
+            $table->string('path')->index();
             $table->timestamps();
         });
     }

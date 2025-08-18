@@ -12,7 +12,7 @@ class Node extends Model
     {
         parent::boot();
 
-        static::created(function (self $node) {
+        static::creating(function (self $node) {
             $pathIndex = $node->parent
                 ? $node->parent->children()->max('path')
                 : Node::whereNull('parent_id')->max('path');
@@ -21,7 +21,6 @@ class Node extends Model
                 ->last() + 1;
             $node->path = ($node->parent?->path ?? '/')
                 .str_pad($pathIndex, 5, '0', STR_PAD_LEFT).'/';
-            $node->save();
         });
     }
 
